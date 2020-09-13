@@ -1,34 +1,33 @@
-use crate::Reg;
+use crate::{Reg, Size};
 
 pub trait ByteExt: Into<u8> {
     fn mod_bits(self) -> u8 {
         self.into() >> 6
     }
 
-    fn reg(self) -> Reg {
-        match self.into() >> 3 & 0b111 {
-            0b000 => Reg::Al,
-            0b001 => Reg::Cl,
-            0b010 => Reg::Dl,
-            0b011 => Reg::Bl,
-            0b100 => Reg::Ah,
-            0b101 => Reg::Ch,
-            0b110 => Reg::Dh,
-            0b111 => Reg::Bh,
-            _ => unreachable!(),
-        }
+    fn reg(self, size: Size) -> Reg {
+        (self.into() >> 3).rm(size)
     }
 
-    fn rm(self) -> Reg {
-        match self.into() & 0b111 {
-            0b000 => Reg::Al,
-            0b001 => Reg::Cl,
-            0b010 => Reg::Dl,
-            0b011 => Reg::Bl,
-            0b100 => Reg::Ah,
-            0b101 => Reg::Ch,
-            0b110 => Reg::Dh,
-            0b111 => Reg::Bh,
+    fn rm(self, size: Size) -> Reg {
+        match (size, self.into() & 0b111) {
+            (Size::Byte, 0b000) => Reg::Al,
+            (Size::Byte, 0b001) => Reg::Cl,
+            (Size::Byte, 0b010) => Reg::Dl,
+            (Size::Byte, 0b011) => Reg::Bl,
+            (Size::Byte, 0b100) => Reg::Ah,
+            (Size::Byte, 0b101) => Reg::Ch,
+            (Size::Byte, 0b110) => Reg::Dh,
+            (Size::Byte, 0b111) => Reg::Bh,
+            (Size::Long, 0b000) => Reg::Eax,
+            (Size::Long, 0b001) => Reg::Ecx,
+            (Size::Long, 0b010) => Reg::Edx,
+            (Size::Long, 0b011) => Reg::Ebx,
+            (Size::Long, 0b100) => Reg::Esp,
+            (Size::Long, 0b101) => Reg::Ebp,
+            (Size::Long, 0b110) => Reg::Esi,
+            (Size::Long, 0b111) => Reg::Edi,
+            (_, 0b000..=0b111) => unimplemented!(),
             _ => unreachable!(),
         }
     }
