@@ -4,7 +4,7 @@ mod error;
 mod inst;
 mod reg;
 
-pub use addr::Addr;
+pub use addr::{Addr, Indirect, Size};
 pub use byte_ext::ByteExt;
 pub use error::Error;
 pub use inst::Inst;
@@ -20,9 +20,20 @@ impl Dasha {
         while let Some(op) = i.next() {
             insts.push(match op {
                 0x00 => match i.next() {
-                    Some(modrm) if modrm.mod_bits() == 0b11 => {
-                        Inst::Add(Addr::Direct(modrm.reg()), Addr::Direct(modrm.rm()))
+                    Some(modrm) if modrm.mod_bits() == 0b00 && modrm.rm(Size::Long) == Reg::Esp => {
+                        return Err(Error::ExpectedSib)
                     }
+                    Some(modrm) if modrm.mod_bits() == 0b00 && modrm.rm(Size::Long) == Reg::Ebp => {
+                        return Err(Error::ExpectedOffsetLong)
+                    }
+                    Some(modrm) if modrm.mod_bits() == 0b00 => Inst::Add(
+                        Addr::Direct(modrm.reg(Size::Byte)),
+                        Addr::Indirect(Indirect::Base(modrm.rm(Size::Long))),
+                    ),
+                    Some(modrm) if modrm.mod_bits() == 0b11 => Inst::Add(
+                        Addr::Direct(modrm.reg(Size::Byte)),
+                        Addr::Direct(modrm.rm(Size::Byte)),
+                    ),
                     Some(_) => unimplemented!(), // FIXME(s1g)
                     #[allow(unreachable_patterns)]
                     Some(_) => unreachable!(),
