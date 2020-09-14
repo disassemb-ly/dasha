@@ -19,4 +19,6 @@ pub enum Reg {
     Ebp,
     Esi,
     Edi,
+
+    Eiz,
 }
