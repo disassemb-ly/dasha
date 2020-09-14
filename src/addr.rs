@@ -9,7 +9,7 @@ pub enum Size {
 
 #[derive(Debug, PartialEq)]
 pub enum Indirect {
-    Base(Reg),
+    Base(Size, Reg),
     Mem(Size, i32),
 }
 

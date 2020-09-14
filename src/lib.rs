@@ -36,7 +36,7 @@ impl Dasha {
                     }
                     Some(modrm) if modrm.mod_bits() == 0b00 => Inst::Add(
                         Addr::Direct(modrm.reg(Size::Byte)),
-                        Addr::Indirect(Indirect::Base(modrm.rm(Size::Long))),
+                        Addr::Indirect(Indirect::Base(Size::Byte, modrm.rm(Size::Long))),
                     ),
                     Some(modrm) if modrm.mod_bits() == 0b11 => Inst::Add(
                         Addr::Direct(modrm.reg(Size::Byte)),
