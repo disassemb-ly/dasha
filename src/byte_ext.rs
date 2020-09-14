@@ -1,4 +1,4 @@
-use crate::{Reg, Size};
+use crate::{Reg, Scale, Size};
 
 pub trait ByteExt: Into<u8> {
     fn mod_bits(self) -> u8 {
@@ -30,6 +30,24 @@ pub trait ByteExt: Into<u8> {
             (_, 0b000..=0b111) => unimplemented!(),
             _ => unreachable!(),
         }
+    }
+
+    fn scale(self) -> Scale {
+        match self.into() >> 6 {
+            0b00 => Scale::One,
+            0b01 => Scale::Two,
+            0b10 => Scale::Four,
+            0b11 => Scale::Eight,
+            _ => unreachable!(),
+        }
+    }
+
+    fn index(self, size: Size) -> Reg {
+        self.reg(size)
+    }
+
+    fn base(self, size: Size) -> Reg {
+        self.rm(size)
     }
 }
 

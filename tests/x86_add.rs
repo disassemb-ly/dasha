@@ -1,4 +1,4 @@
-use dasha::{Addr, Dasha, Error, Indirect, Inst, Reg, Size};
+use dasha::{Addr, Dasha, Error, Indirect, Inst, Reg, Scale, Size};
 
 #[test]
 fn test_direct_addressing() {
@@ -1032,6 +1032,709 @@ fn test_indirect_mem_addressing() {
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bh),
             Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+        )])
+    );
+}
+
+#[test]
+fn test_indirect_sib_addressing() {
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x00]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x01]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x02]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x03]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x04]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x05]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x06]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x07]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Eax,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x08]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x09]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x0a]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x0b]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x0c]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x0d]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x0e]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x0f]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Ecx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x10]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x11]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x12]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x13]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x14]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x15]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x16]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x17]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Edx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x18]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x19]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x1a]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x1b]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x1c]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x1d]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x1e]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x1f]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Ebx,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x20]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Eiz,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x21]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Eiz,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x22]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Eiz,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x23]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Eiz,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x24]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::Base(Size::Byte, Reg::Esp)),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x25]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x26]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Eiz,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x27]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Eiz,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x28]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x29]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x2a]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x2b]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x2c]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x2d]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x2e]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x2f]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Ebp,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x30]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x31]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x32]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x33]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x34]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x35]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x36]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x37]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Esi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x38]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Eax,
+                Reg::Edi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x39]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ecx,
+                Reg::Edi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x3a]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edx,
+                Reg::Edi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x3b]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Ebx,
+                Reg::Edi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x3c]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esp,
+                Reg::Edi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x3d]),
+        Err(Error::ExpectedOffsetLong)
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x3e]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Esi,
+                Reg::Edi,
+                Scale::One
+            )),
+        )])
+    );
+    assert_eq!(
+        Dasha::disasm(&[0x00, 0x04, 0x3f]),
+        Ok(vec![Inst::Add(
+            Addr::Direct(Reg::Al),
+            Addr::Indirect(Indirect::BaseIndexScale(
+                Size::Byte,
+                Reg::Edi,
+                Reg::Edi,
+                Scale::One
+            )),
         )])
     );
 }

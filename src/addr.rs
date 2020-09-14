@@ -8,9 +8,19 @@ pub enum Size {
 }
 
 #[derive(Debug, PartialEq)]
+pub enum Scale {
+    One,
+    Two,
+    Four,
+    Eight,
+}
+
+#[derive(Debug, PartialEq)]
 pub enum Indirect {
     Base(Size, Reg),
+    BaseIndexScale(Size, Reg, Reg, Scale),
     Mem(Size, i32),
+    OffsetIndexScale(Size, i128, Reg, Scale),
 }
 
 #[derive(Debug, PartialEq)]
