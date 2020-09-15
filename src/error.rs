@@ -4,6 +4,7 @@ use std::{error, fmt};
 pub enum Error {
     ExpectedModRm,
     ExpectedSib,
+    ExpectedOffsetByte,
     ExpectedOffsetLong,
 }
 
@@ -14,6 +15,7 @@ impl fmt::Display for Error {
         match self {
             Error::ExpectedModRm => write!(f, "expected mod-reg-r/m byte"),
             Error::ExpectedSib => write!(f, "expected scale-index-base byte"),
+            Error::ExpectedOffsetByte => write!(f, "expected 1 offset byte (byte)"),
             Error::ExpectedOffsetLong => write!(f, "expected 4 offset bytes (long)"),
         }
     }

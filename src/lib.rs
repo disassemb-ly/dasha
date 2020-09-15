@@ -90,6 +90,29 @@ impl Dasha {
                         Addr::Direct(modrm.reg(Size::Byte)),
                         Addr::Indirect(Indirect::Base(Size::Byte, modrm.rm(Size::Long))),
                     ),
+                    Some(modrm) if modrm.mod_bits() == 0b01 && modrm.rm(Size::Long) == Reg::Esp => {
+                        match i.next() {
+                            Some(sib) => Inst::Add(
+                                Addr::Direct(modrm.reg(Size::Byte)),
+                                Addr::Indirect(Indirect::OffsetBaseIndexScale(
+                                    Size::Byte,
+                                    i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)? as _,
+                                    sib.base(Size::Long),
+                                    sib.index(Size::Long),
+                                    sib.scale(),
+                                )),
+                            ),
+                            None => return Err(Error::ExpectedSib),
+                        }
+                    }
+                    Some(modrm) if modrm.mod_bits() == 0b01 => Inst::Add(
+                        Addr::Direct(modrm.reg(Size::Byte)),
+                        Addr::Indirect(Indirect::OffsetBase(
+                            Size::Byte,
+                            i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)? as _,
+                            modrm.rm(Size::Long),
+                        )),
+                    ),
                     Some(modrm) if modrm.mod_bits() == 0b11 => Inst::Add(
                         Addr::Direct(modrm.reg(Size::Byte)),
                         Addr::Direct(modrm.rm(Size::Byte)),

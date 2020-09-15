@@ -20,6 +20,8 @@ pub enum Indirect {
     Base(Size, Reg),
     BaseIndexScale(Size, Reg, Reg, Scale),
     Mem(Size, i32),
+    OffsetBase(Size, i128, Reg),
+    OffsetBaseIndexScale(Size, i128, Reg, Reg, Scale),
     OffsetIndexScale(Size, i128, Reg, Scale),
 }
 
