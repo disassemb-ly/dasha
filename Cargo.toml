@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["William Tange <will@brt.sexy>"]
 edition = "2018"
 
+[dependencies]
+byteorder = "*"
+
 [dev-dependencies.cargo-husky]
 version = "1"
 default-features = false
