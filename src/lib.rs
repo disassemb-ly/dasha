@@ -98,7 +98,7 @@ impl Dasha {
                                 Addr::Direct(modrm.reg(Size::Byte)),
                                 Addr::Indirect(Indirect::OffsetBaseIndexScale(
                                     Size::Byte,
-                                    Offset::I8(i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)?),
+                                    Offset::I8(i.read_le().ok_or(Error::ExpectedOffsetByte)?),
                                     sib.base(Size::Long),
                                     sib.index(Size::Long),
                                     sib.scale(),
@@ -111,7 +111,30 @@ impl Dasha {
                         Addr::Direct(modrm.reg(Size::Byte)),
                         Addr::Indirect(Indirect::OffsetBase(
                             Size::Byte,
-                            Offset::I8(i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)?),
+                            Offset::I8(i.read_le().ok_or(Error::ExpectedOffsetByte)?),
+                            modrm.rm(Size::Long),
+                        )),
+                    ),
+                    Some(modrm) if modrm.mod_bits() == 0b10 && modrm.rm(Size::Long) == Reg::Esp => {
+                        match i.next() {
+                            Some(sib) => Inst::Add(
+                                Addr::Direct(modrm.reg(Size::Byte)),
+                                Addr::Indirect(Indirect::OffsetBaseIndexScale(
+                                    Size::Byte,
+                                    Offset::I32(i.read_le().ok_or(Error::ExpectedOffsetLong)?),
+                                    sib.base(Size::Long),
+                                    sib.index(Size::Long),
+                                    sib.scale(),
+                                )),
+                            ),
+                            None => return Err(Error::ExpectedSib),
+                        }
+                    }
+                    Some(modrm) if modrm.mod_bits() == 0b10 => Inst::Add(
+                        Addr::Direct(modrm.reg(Size::Byte)),
+                        Addr::Indirect(Indirect::OffsetBase(
+                            Size::Byte,
+                            Offset::I32(i.read_le().ok_or(Error::ExpectedOffsetLong)?),
                             modrm.rm(Size::Long),
                         )),
                     ),
