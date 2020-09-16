@@ -135,9 +135,7 @@ macro_rules! read_inst {
                 Addr::Direct(modrm.reg($size)),
                 Addr::Direct(modrm.rm($size)),
             ),
-            Some(_) => unimplemented!(), // FIXME(s1g)
-            #[allow(unreachable_patterns)]
-            Some(_) => unreachable!(),
+            Some(_) => unreachable!(), // all variations of the mod bits are covered
             None => return Err(Error::ExpectedModRm),
         }
     };
