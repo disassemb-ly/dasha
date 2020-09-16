@@ -1,7 +1,7 @@
 use dasha::{Addr, Dasha, Error, Indirect, Inst, Offset, Reg, Scale, Size};
 
 #[test]
-fn test_direct_orressing() {
+fn test_direct_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0xc0]),
         Ok(vec![
@@ -389,7 +389,7 @@ fn test_direct_orressing() {
 }
 
 #[test]
-fn test_indirect_base_orressing() {
+fn test_indirect_base_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0x00]),
         Ok(vec![Inst::Or(
@@ -745,7 +745,7 @@ fn test_indirect_base_orressing() {
 }
 
 #[test]
-fn test_indirect_mem_orressing() {
+fn test_indirect_mem_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0x05, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Or(
@@ -973,7 +973,7 @@ fn test_indirect_mem_orressing() {
 }
 
 #[test]
-fn test_indirect_sib_orressing() {
+fn test_indirect_sib_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0x04, 0x00]),
         Ok(vec![Inst::Or(
@@ -1676,7 +1676,7 @@ fn test_indirect_sib_orressing() {
 }
 
 #[test]
-fn test_indirect_byte_offset_byte_orressing() {
+fn test_indirect_byte_offset_byte_addressing() {
     assert_eq!(Dasha::disasm(&[0x08, 0x40]), Err(Error::ExpectedOffsetByte));
     assert_eq!(
         Dasha::disasm(&[0x08, 0x40, 0x00]),
@@ -1916,7 +1916,7 @@ fn test_indirect_byte_offset_byte_orressing() {
 }
 
 #[test]
-fn test_indirect_byte_offset_sib_byte_orressing() {
+fn test_indirect_byte_offset_sib_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0x44, 0x00, 0x00]),
         Ok(vec![Inst::Or(
@@ -1972,7 +1972,7 @@ fn test_indirect_byte_offset_sib_byte_orressing() {
 }
 
 #[test]
-fn test_indirect_long_offset_byte_orressing() {
+fn test_indirect_long_offset_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0x80, 0x00, 0x00, 0x80]),
         Err(Error::ExpectedOffsetLong)
@@ -2243,7 +2243,7 @@ fn test_indirect_long_offset_byte_orressing() {
 }
 
 #[test]
-fn test_indirect_long_offset_sib_byte_orressing() {
+fn test_indirect_long_offset_sib_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x08, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Or(

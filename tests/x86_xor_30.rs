@@ -1,7 +1,7 @@
 use dasha::{Addr, Dasha, Error, Indirect, Inst, Offset, Reg, Scale, Size};
 
 #[test]
-fn test_direct_xorressing() {
+fn test_direct_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0xc0]),
         Ok(vec![Inst::Xor(
@@ -453,7 +453,7 @@ fn test_direct_xorressing() {
 }
 
 #[test]
-fn test_indirect_base_xorressing() {
+fn test_indirect_base_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0x00]),
         Ok(vec![Inst::Xor(
@@ -809,7 +809,7 @@ fn test_indirect_base_xorressing() {
 }
 
 #[test]
-fn test_indirect_mem_xorressing() {
+fn test_indirect_mem_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0x05, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Xor(
@@ -1037,7 +1037,7 @@ fn test_indirect_mem_xorressing() {
 }
 
 #[test]
-fn test_indirect_sib_xorressing() {
+fn test_indirect_sib_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0x04, 0x00]),
         Ok(vec![Inst::Xor(
@@ -1740,7 +1740,7 @@ fn test_indirect_sib_xorressing() {
 }
 
 #[test]
-fn test_indirect_byte_offset_byte_xorressing() {
+fn test_indirect_byte_offset_byte_addressing() {
     assert_eq!(Dasha::disasm(&[0x30, 0x40]), Err(Error::ExpectedOffsetByte));
     assert_eq!(
         Dasha::disasm(&[0x30, 0x40, 0x00]),
@@ -1980,7 +1980,7 @@ fn test_indirect_byte_offset_byte_xorressing() {
 }
 
 #[test]
-fn test_indirect_byte_offset_sib_byte_xorressing() {
+fn test_indirect_byte_offset_sib_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0x44, 0x00, 0x00]),
         Ok(vec![Inst::Xor(
@@ -2036,7 +2036,7 @@ fn test_indirect_byte_offset_sib_byte_xorressing() {
 }
 
 #[test]
-fn test_indirect_long_offset_byte_xorressing() {
+fn test_indirect_long_offset_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0x80, 0x00, 0x00, 0x80]),
         Err(Error::ExpectedOffsetLong)
@@ -2307,7 +2307,7 @@ fn test_indirect_long_offset_byte_xorressing() {
 }
 
 #[test]
-fn test_indirect_long_offset_sib_byte_xorressing() {
+fn test_indirect_long_offset_sib_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x30, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Xor(
