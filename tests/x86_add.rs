@@ -1,4 +1,4 @@
-use dasha::{Addr, Dasha, Error, Indirect, Inst, Reg, Scale, Size};
+use dasha::{Addr, Dasha, Error, Indirect, Inst, Offset, Reg, Scale, Size};
 
 #[test]
 fn test_direct_addressing() {
@@ -814,224 +814,224 @@ fn test_indirect_mem_addressing() {
         Dasha::disasm(&[0x00, 0x05, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x05, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x05, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x05, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x0d, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Cl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x0d, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Cl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x0d, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Cl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x0d, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Cl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x15, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x15, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x15, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x15, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x1d, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x1d, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x1d, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x1d, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bl),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x25, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ah),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x25, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ah),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x25, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ah),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x25, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ah),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x2d, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ch),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x2d, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ch),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x2d, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ch),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x2d, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Ch),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x35, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x35, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x35, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x35, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Dh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x3d, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x3d, 0xff, 0xff, 0xff, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, 0x7fffffff)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(0x7fffffff))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x3d, 0x00, 0x00, 0x00, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -0x80000000)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-0x80000000))),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x3d, 0xff, 0xff, 0xff, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Bh),
-            Addr::Indirect(Indirect::Mem(Size::Byte, -1)),
+            Addr::Indirect(Indirect::Mem(Size::Byte, Offset::I32(-1))),
         )])
     );
 }
@@ -1746,28 +1746,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x40, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Eax)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Eax)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x40, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Eax)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Eax)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x40, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Eax)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Eax
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x40, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Eax)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Eax)),
         )])
     );
     assert_eq!(Dasha::disasm(&[0x00, 0x41]), Err(Error::ExpectedOffsetByte));
@@ -1775,28 +1779,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x41, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Ecx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Ecx)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x41, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Ecx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Ecx)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x41, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Ecx)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Ecx
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x41, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Ecx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Ecx)),
         )])
     );
     assert_eq!(Dasha::disasm(&[0x00, 0x42]), Err(Error::ExpectedOffsetByte));
@@ -1804,28 +1812,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x42, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Edx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Edx)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x42, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Edx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Edx)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x42, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Edx)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Edx
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x42, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Edx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Edx)),
         )])
     );
     assert_eq!(Dasha::disasm(&[0x00, 0x43]), Err(Error::ExpectedOffsetByte));
@@ -1833,28 +1845,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x43, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Ebx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Ebx)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x43, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Ebx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Ebx)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x43, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Ebx)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Ebx
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x43, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Ebx)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Ebx)),
         )])
     );
     assert_eq!(Dasha::disasm(&[0x00, 0x44]), Err(Error::ExpectedSib));
@@ -1867,28 +1883,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x45, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Ebp)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Ebp)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x45, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Ebp)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Ebp)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x45, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Ebp)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Ebp
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x45, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Ebp)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Ebp)),
         )])
     );
     assert_eq!(Dasha::disasm(&[0x00, 0x46]), Err(Error::ExpectedOffsetByte));
@@ -1896,28 +1916,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x46, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Esi)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Esi)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x46, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Esi)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Esi)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x46, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Esi)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Esi
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x46, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Esi)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Esi)),
         )])
     );
     assert_eq!(Dasha::disasm(&[0x00, 0x47]), Err(Error::ExpectedOffsetByte));
@@ -1925,28 +1949,32 @@ fn test_indirect_byte_offset_byte_addressing() {
         Dasha::disasm(&[0x00, 0x47, 0x00]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0, Reg::Edi)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0), Reg::Edi)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x47, 0x7f]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, 0x7f, Reg::Edi)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(0x7f), Reg::Edi)),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x47, 0x80]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -0x80, Reg::Edi)),
+            Addr::Indirect(Indirect::OffsetBase(
+                Size::Byte,
+                Offset::I8(-0x80),
+                Reg::Edi
+            )),
         )])
     );
     assert_eq!(
         Dasha::disasm(&[0x00, 0x47, 0xff]),
         Ok(vec![Inst::Add(
             Addr::Direct(Reg::Al),
-            Addr::Indirect(Indirect::OffsetBase(Size::Byte, -1, Reg::Edi)),
+            Addr::Indirect(Indirect::OffsetBase(Size::Byte, Offset::I8(-1), Reg::Edi)),
         )])
     );
 }

@@ -1,12 +1,14 @@
 mod addr;
 mod byte_ext;
+mod display;
 mod error;
 mod inst;
 mod iter_ext;
 mod reg;
 
-pub use addr::{Addr, Indirect, Scale, Size};
+pub use addr::{Addr, Indirect, Offset, Scale, Size};
 pub use byte_ext::ByteExt;
+pub use display::{DisplayFormat, Format};
 pub use error::Error;
 pub use inst::Inst;
 pub use iter_ext::IterExt;
@@ -41,7 +43,7 @@ impl Dasha {
                                     Addr::Direct(modrm.reg(Size::Byte)),
                                     Addr::Indirect(Indirect::OffsetIndexScale(
                                         Size::Byte,
-                                        i.read_le().ok_or(Error::ExpectedOffsetLong)?,
+                                        Offset::I32(i.read_le().ok_or(Error::ExpectedOffsetLong)?),
                                         Reg::Eiz,
                                         sib.scale(),
                                     )),
@@ -60,7 +62,7 @@ impl Dasha {
                                 Addr::Direct(modrm.reg(Size::Byte)),
                                 Addr::Indirect(Indirect::OffsetIndexScale(
                                     Size::Byte,
-                                    i.read_le().ok_or(Error::ExpectedOffsetLong)?,
+                                    Offset::I32(i.read_le().ok_or(Error::ExpectedOffsetLong)?),
                                     sib.index(Size::Long),
                                     sib.scale(),
                                 )),
@@ -82,7 +84,7 @@ impl Dasha {
                             Addr::Direct(modrm.reg(Size::Byte)),
                             Addr::Indirect(Indirect::Mem(
                                 Size::Byte,
-                                i.read_le().ok_or(Error::ExpectedOffsetLong)?,
+                                Offset::I32(i.read_le().ok_or(Error::ExpectedOffsetLong)?),
                             )),
                         )
                     }
@@ -96,7 +98,7 @@ impl Dasha {
                                 Addr::Direct(modrm.reg(Size::Byte)),
                                 Addr::Indirect(Indirect::OffsetBaseIndexScale(
                                     Size::Byte,
-                                    i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)? as _,
+                                    Offset::I8(i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)?),
                                     sib.base(Size::Long),
                                     sib.index(Size::Long),
                                     sib.scale(),
@@ -109,7 +111,7 @@ impl Dasha {
                         Addr::Direct(modrm.reg(Size::Byte)),
                         Addr::Indirect(Indirect::OffsetBase(
                             Size::Byte,
-                            i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)? as _,
+                            Offset::I8(i.read_le::<i8>().ok_or(Error::ExpectedOffsetByte)?),
                             modrm.rm(Size::Long),
                         )),
                     ),
