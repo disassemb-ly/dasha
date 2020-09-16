@@ -9,6 +9,24 @@ pub enum Size {
     Long,
 }
 
+impl Size {
+    pub fn assert_eq(self, other: Self) -> Self {
+        assert_eq!(self, other);
+
+        self
+    }
+}
+
+impl DisplayFormat for Size {
+    fn fmt(&self, fmt: Format, f: &mut fmt::Formatter) -> fmt::Result {
+        match (self, fmt) {
+            (Size::Byte, Format::Att) => write!(f, "b"),
+            (Size::Word, Format::Att) => write!(f, "w"),
+            (Size::Long, Format::Att) => write!(f, "l"),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Scale {
     One,
@@ -55,6 +73,19 @@ pub enum Indirect {
     OffsetIndexScale(Size, Offset, Reg, Scale),
 }
 
+impl Indirect {
+    pub fn size(&self) -> Size {
+        match self {
+            Indirect::Base(size, _)
+            | Indirect::BaseIndexScale(size, _, _, _)
+            | Indirect::Mem(size, _)
+            | Indirect::OffsetBase(size, _, _)
+            | Indirect::OffsetBaseIndexScale(size, _, _, _, _)
+            | Indirect::OffsetIndexScale(size, _, _, _) => *size,
+        }
+    }
+}
+
 impl DisplayFormat for Indirect {
     fn fmt(&self, fmt: Format, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -87,6 +118,15 @@ impl DisplayFormat for Indirect {
 pub enum Addr {
     Direct(Reg),
     Indirect(Indirect),
+}
+
+impl Addr {
+    pub fn size(&self) -> Size {
+        match self {
+            Addr::Direct(reg) => reg.size(),
+            Addr::Indirect(ind) => ind.size(),
+        }
+    }
 }
 
 impl DisplayFormat for Addr {

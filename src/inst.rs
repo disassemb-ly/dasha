@@ -9,8 +9,14 @@ pub enum Inst {
 
 impl DisplayFormat for Inst {
     fn fmt(&self, fmt: Format, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Inst::Add(op1, op2) => write!(f, "add {}, {}", op1.display(fmt), op2.display(fmt)), // FIXME(s1g): at&t suffixes insts with size
+        match (self, fmt) {
+            (Inst::Add(op1, op2), Format::Att) => write!(
+                f,
+                "add{} {}, {}",
+                op1.size().assert_eq(op2.size()).display(fmt),
+                op1.display(fmt),
+                op2.display(fmt)
+            ),
         }
     }
 }

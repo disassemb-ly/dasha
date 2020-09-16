@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{DisplayFormat, Format};
+use crate::{DisplayFormat, Format, Size};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Reg {
@@ -25,6 +25,25 @@ pub enum Reg {
     Edi,
 
     Eiz,
+}
+
+impl Reg {
+    pub fn size(&self) -> Size {
+        match self {
+            Reg::Al | Reg::Cl | Reg::Dl | Reg::Bl | Reg::Ah | Reg::Ch | Reg::Dh | Reg::Bh => {
+                Size::Byte
+            }
+            Reg::Eax
+            | Reg::Ecx
+            | Reg::Edx
+            | Reg::Ebx
+            | Reg::Esp
+            | Reg::Ebp
+            | Reg::Esi
+            | Reg::Edi
+            | Reg::Eiz => Size::Long, // FIXME(s1g): is %eiz long?
+        }
+    }
 }
 
 impl DisplayFormat for Reg {
