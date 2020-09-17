@@ -233,7 +233,7 @@ impl Dasha {
                 0x39 => read_inst!(Inst::Cmp, Size::Long, Order::Left, &mut i),
                 0x3a => read_inst!(Inst::Cmp, Size::Byte, Order::Right, &mut i),
                 0x3b => read_inst!(Inst::Cmp, Size::Long, Order::Right, &mut i),
-                _ => unimplemented!(),
+                op => unimplemented!("{:#04x}", op),
             });
         }
 
