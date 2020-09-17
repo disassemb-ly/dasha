@@ -7,6 +7,7 @@ mod error;
 mod inst;
 mod iter_ext;
 mod reg;
+mod val;
 
 pub use addr::{Addr, Indirect, Offset, Scale, Size};
 pub use byte_ext::ByteExt;
@@ -15,6 +16,7 @@ pub use error::Error;
 pub use inst::Inst;
 pub use iter_ext::IterExt;
 pub use reg::Reg;
+pub use val::{Imm, Val};
 
 pub struct Dasha;
 
@@ -29,8 +31,8 @@ macro_rules! read_inst {
                     {
                         $inst.call(
                             $order(
-                                Addr::Direct(modrm.reg($size)),
-                                Addr::Indirect(Indirect::Base($size, Reg::Esp)),
+                                Val::Addr(Addr::Direct(modrm.reg($size))),
+                                Val::Addr(Addr::Indirect(Indirect::Base($size, Reg::Esp))),
                             )
                             .into(),
                         )
@@ -41,50 +43,50 @@ macro_rules! read_inst {
                     {
                         $inst.call(
                             $order(
-                                Addr::Direct(modrm.reg($size)),
-                                Addr::Indirect(Indirect::OffsetIndexScale(
+                                Val::Addr(Addr::Direct(modrm.reg($size))),
+                                Val::Addr(Addr::Indirect(Indirect::OffsetIndexScale(
                                     $size,
                                     Offset::I32($iter.read_le().ok_or(Error::ExpectedOffsetLong)?),
                                     Reg::Eiz,
                                     sib.scale(),
-                                )),
+                                ))),
                             )
                             .into(),
                         )
                     }
                     Some(sib) if sib.index(Size::Long) == Reg::Esp => $inst.call(
                         $order(
-                            Addr::Direct(modrm.reg($size)),
-                            Addr::Indirect(Indirect::BaseIndexScale(
+                            Val::Addr(Addr::Direct(modrm.reg($size))),
+                            Val::Addr(Addr::Indirect(Indirect::BaseIndexScale(
                                 $size,
                                 sib.base(Size::Long),
                                 Reg::Eiz,
                                 sib.scale(),
-                            )),
+                            ))),
                         )
                         .into(),
                     ),
                     Some(sib) if sib.base(Size::Long) == Reg::Ebp => $inst.call(
                         $order(
-                            Addr::Direct(modrm.reg($size)),
-                            Addr::Indirect(Indirect::OffsetIndexScale(
+                            Val::Addr(Addr::Direct(modrm.reg($size))),
+                            Val::Addr(Addr::Indirect(Indirect::OffsetIndexScale(
                                 $size,
                                 Offset::I32($iter.read_le().ok_or(Error::ExpectedOffsetLong)?),
                                 sib.index(Size::Long),
                                 sib.scale(),
-                            )),
+                            ))),
                         )
                         .into(),
                     ),
                     Some(sib) => $inst.call(
                         $order(
-                            Addr::Direct(modrm.reg($size)),
-                            Addr::Indirect(Indirect::BaseIndexScale(
+                            Val::Addr(Addr::Direct(modrm.reg($size))),
+                            Val::Addr(Addr::Indirect(Indirect::BaseIndexScale(
                                 $size,
                                 sib.base(Size::Long),
                                 sib.index(Size::Long),
                                 sib.scale(),
-                            )),
+                            ))),
                         )
                         .into(),
                     ),
@@ -94,18 +96,18 @@ macro_rules! read_inst {
             Some(modrm) if modrm.mod_bits() == 0b00 && modrm.rm(Size::Long) == Reg::Ebp => $inst
                 .call(
                     $order(
-                        Addr::Direct(modrm.reg($size)),
-                        Addr::Indirect(Indirect::Mem(
+                        Val::Addr(Addr::Direct(modrm.reg($size))),
+                        Val::Addr(Addr::Indirect(Indirect::Mem(
                             $size,
                             Offset::I32($iter.read_le().ok_or(Error::ExpectedOffsetLong)?),
-                        )),
+                        ))),
                     )
                     .into(),
                 ),
             Some(modrm) if modrm.mod_bits() == 0b00 => $inst.call(
                 $order(
-                    Addr::Direct(modrm.reg($size)),
-                    Addr::Indirect(Indirect::Base($size, modrm.rm(Size::Long))),
+                    Val::Addr(Addr::Direct(modrm.reg($size))),
+                    Val::Addr(Addr::Indirect(Indirect::Base($size, modrm.rm(Size::Long)))),
                 )
                 .into(),
             ),
@@ -113,14 +115,14 @@ macro_rules! read_inst {
                 match $iter.next() {
                     Some(sib) => $inst.call(
                         $order(
-                            Addr::Direct(modrm.reg($size)),
-                            Addr::Indirect(Indirect::OffsetBaseIndexScale(
+                            Val::Addr(Addr::Direct(modrm.reg($size))),
+                            Val::Addr(Addr::Indirect(Indirect::OffsetBaseIndexScale(
                                 $size,
                                 Offset::I8($iter.read_le().ok_or(Error::ExpectedOffsetByte)?),
                                 sib.base(Size::Long),
                                 sib.index(Size::Long),
                                 sib.scale(),
-                            )),
+                            ))),
                         )
                         .into(),
                     ),
@@ -129,12 +131,12 @@ macro_rules! read_inst {
             }
             Some(modrm) if modrm.mod_bits() == 0b01 => $inst.call(
                 $order(
-                    Addr::Direct(modrm.reg($size)),
-                    Addr::Indirect(Indirect::OffsetBase(
+                    Val::Addr(Addr::Direct(modrm.reg($size))),
+                    Val::Addr(Addr::Indirect(Indirect::OffsetBase(
                         $size,
                         Offset::I8($iter.read_le().ok_or(Error::ExpectedOffsetByte)?),
                         modrm.rm(Size::Long),
-                    )),
+                    ))),
                 )
                 .into(),
             ),
@@ -142,14 +144,14 @@ macro_rules! read_inst {
                 match $iter.next() {
                     Some(sib) => $inst.call(
                         $order(
-                            Addr::Direct(modrm.reg($size)),
-                            Addr::Indirect(Indirect::OffsetBaseIndexScale(
+                            Val::Addr(Addr::Direct(modrm.reg($size))),
+                            Val::Addr(Addr::Indirect(Indirect::OffsetBaseIndexScale(
                                 $size,
                                 Offset::I32($iter.read_le().ok_or(Error::ExpectedOffsetLong)?),
                                 sib.base(Size::Long),
                                 sib.index(Size::Long),
                                 sib.scale(),
-                            )),
+                            ))),
                         )
                         .into(),
                     ),
@@ -158,19 +160,19 @@ macro_rules! read_inst {
             }
             Some(modrm) if modrm.mod_bits() == 0b10 => $inst.call(
                 $order(
-                    Addr::Direct(modrm.reg($size)),
-                    Addr::Indirect(Indirect::OffsetBase(
+                    Val::Addr(Addr::Direct(modrm.reg($size))),
+                    Val::Addr(Addr::Indirect(Indirect::OffsetBase(
                         $size,
                         Offset::I32($iter.read_le().ok_or(Error::ExpectedOffsetLong)?),
                         modrm.rm(Size::Long),
-                    )),
+                    ))),
                 )
                 .into(),
             ),
             Some(modrm) if modrm.mod_bits() == 0b11 => $inst.call(
                 $order(
-                    Addr::Direct(modrm.reg($size)),
-                    Addr::Direct(modrm.rm($size)),
+                    Val::Addr(Addr::Direct(modrm.reg($size))),
+                    Val::Addr(Addr::Direct(modrm.rm($size))),
                 )
                 .into(),
             ),

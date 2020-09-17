@@ -1,17 +1,17 @@
 use std::fmt;
 
-use crate::{Addr, DisplayFormat, Format};
+use crate::{DisplayFormat, Format, Val};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Inst {
-    Add(Addr, Addr),
-    Or(Addr, Addr),
-    Adc(Addr, Addr),
-    Sbb(Addr, Addr),
-    And(Addr, Addr),
-    Sub(Addr, Addr),
-    Xor(Addr, Addr),
-    Cmp(Addr, Addr),
+    Add(Val, Val),
+    Or(Val, Val),
+    Adc(Val, Val),
+    Sbb(Val, Val),
+    And(Val, Val),
+    Sub(Val, Val),
+    Xor(Val, Val),
+    Cmp(Val, Val),
 }
 
 impl DisplayFormat for Inst {
