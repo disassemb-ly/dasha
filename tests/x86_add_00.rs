@@ -1,7 +1,7 @@
 use dasha::{Addr, Dasha, Error, Indirect, Inst, Offset, Reg, Scale, Size};
 
 #[test]
-fn test_direct_addressing() {
+fn test_direct_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x00, 0xc0]),
         Ok(vec![Inst::Add(
@@ -453,7 +453,7 @@ fn test_direct_addressing() {
 }
 
 #[test]
-fn test_indirect_base_addressing() {
+fn test_indirect_base_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x00, 0x00]),
         Ok(vec![Inst::Add(
@@ -809,7 +809,7 @@ fn test_indirect_base_addressing() {
 }
 
 #[test]
-fn test_indirect_mem_addressing() {
+fn test_indirect_mem_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x00, 0x05, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::Add(
@@ -1037,7 +1037,7 @@ fn test_indirect_mem_addressing() {
 }
 
 #[test]
-fn test_indirect_sib_addressing() {
+fn test_indirect_sib_byte_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x00, 0x04, 0x00]),
         Ok(vec![Inst::Add(

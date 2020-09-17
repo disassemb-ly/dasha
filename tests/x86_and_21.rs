@@ -1,7 +1,7 @@
 use dasha::{Addr, Dasha, Error, Indirect, Inst, Offset, Reg, Scale, Size};
 
 #[test]
-fn test_direct_addressing() {
+fn test_direct_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0xc0]),
         Ok(vec![Inst::And(
@@ -453,7 +453,7 @@ fn test_direct_addressing() {
 }
 
 #[test]
-fn test_indirect_base_addressing() {
+fn test_indirect_base_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0x00]),
         Ok(vec![Inst::And(
@@ -809,7 +809,7 @@ fn test_indirect_base_addressing() {
 }
 
 #[test]
-fn test_indirect_mem_addressing() {
+fn test_indirect_mem_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0x05, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::And(
@@ -1037,7 +1037,7 @@ fn test_indirect_mem_addressing() {
 }
 
 #[test]
-fn test_indirect_sib_addressing() {
+fn test_indirect_sib_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0x04, 0x00]),
         Ok(vec![Inst::And(
@@ -1740,7 +1740,7 @@ fn test_indirect_sib_addressing() {
 }
 
 #[test]
-fn test_indirect_byte_offset_byte_addressing() {
+fn test_indirect_byte_offset_long_addressing() {
     assert_eq!(Dasha::disasm(&[0x21, 0x40]), Err(Error::ExpectedOffsetByte));
     assert_eq!(
         Dasha::disasm(&[0x21, 0x40, 0x00]),
@@ -1980,7 +1980,7 @@ fn test_indirect_byte_offset_byte_addressing() {
 }
 
 #[test]
-fn test_indirect_byte_offset_sib_byte_addressing() {
+fn test_indirect_byte_offset_sib_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0x44, 0x00, 0x00]),
         Ok(vec![Inst::And(
@@ -2036,7 +2036,7 @@ fn test_indirect_byte_offset_sib_byte_addressing() {
 }
 
 #[test]
-fn test_indirect_long_offset_byte_addressing() {
+fn test_indirect_long_offset_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0x80, 0x00, 0x00, 0x80]),
         Err(Error::ExpectedOffsetLong)
@@ -2307,7 +2307,7 @@ fn test_indirect_long_offset_byte_addressing() {
 }
 
 #[test]
-fn test_indirect_long_offset_sib_byte_addressing() {
+fn test_indirect_long_offset_sib_long_addressing() {
     assert_eq!(
         Dasha::disasm(&[0x21, 0x84, 0x00, 0x00, 0x00, 0x00, 0x00]),
         Ok(vec![Inst::And(
