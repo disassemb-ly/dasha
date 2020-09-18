@@ -20,7 +20,7 @@ pub use val::{Imm, Val};
 
 pub struct Dasha;
 
-macro_rules! read_inst {
+macro_rules! read_mrr_inst {
     ( $inst:path, $size:expr, $order:path, $iter:expr ) => {
         match $iter.next() {
             Some(modrm) if modrm.mod_bits() == 0b00 && modrm.rm(Size::Long) == Reg::Esp => {
@@ -182,6 +182,15 @@ macro_rules! read_inst {
     };
 }
 
+macro_rules! read_imm_inst {
+    ( $inst:path, $dst:expr, $imm:path, $err:expr, $iter:expr ) => {
+        $inst(
+            Val::Addr(Addr::Direct($dst)),
+            Val::Imm($imm($iter.read_le().ok_or($err)?)),
+        )
+    };
+}
+
 enum Order<T> {
     Left(T, T),
     Right(T, T),
@@ -203,38 +212,98 @@ impl Dasha {
 
         while let Some(op) = i.next() {
             insts.push(match op {
-                0x00 => read_inst!(Inst::Add, Size::Byte, Order::Left, &mut i),
-                0x01 => read_inst!(Inst::Add, Size::Long, Order::Left, &mut i),
-                0x02 => read_inst!(Inst::Add, Size::Byte, Order::Right, &mut i),
-                0x03 => read_inst!(Inst::Add, Size::Long, Order::Right, &mut i),
-                0x08 => read_inst!(Inst::Or, Size::Byte, Order::Left, &mut i),
-                0x09 => read_inst!(Inst::Or, Size::Long, Order::Left, &mut i),
-                0x0a => read_inst!(Inst::Or, Size::Byte, Order::Right, &mut i),
-                0x0b => read_inst!(Inst::Or, Size::Long, Order::Right, &mut i),
-                0x10 => read_inst!(Inst::Adc, Size::Byte, Order::Left, &mut i),
-                0x11 => read_inst!(Inst::Adc, Size::Long, Order::Left, &mut i),
-                0x12 => read_inst!(Inst::Adc, Size::Byte, Order::Right, &mut i),
-                0x13 => read_inst!(Inst::Adc, Size::Long, Order::Right, &mut i),
-                0x18 => read_inst!(Inst::Sbb, Size::Byte, Order::Left, &mut i),
-                0x19 => read_inst!(Inst::Sbb, Size::Long, Order::Left, &mut i),
-                0x1a => read_inst!(Inst::Sbb, Size::Byte, Order::Right, &mut i),
-                0x1b => read_inst!(Inst::Sbb, Size::Long, Order::Right, &mut i),
-                0x20 => read_inst!(Inst::And, Size::Byte, Order::Left, &mut i),
-                0x21 => read_inst!(Inst::And, Size::Long, Order::Left, &mut i),
-                0x22 => read_inst!(Inst::And, Size::Byte, Order::Right, &mut i),
-                0x23 => read_inst!(Inst::And, Size::Long, Order::Right, &mut i),
-                0x28 => read_inst!(Inst::Sub, Size::Byte, Order::Left, &mut i),
-                0x29 => read_inst!(Inst::Sub, Size::Long, Order::Left, &mut i),
-                0x2a => read_inst!(Inst::Sub, Size::Byte, Order::Right, &mut i),
-                0x2b => read_inst!(Inst::Sub, Size::Long, Order::Right, &mut i),
-                0x30 => read_inst!(Inst::Xor, Size::Byte, Order::Left, &mut i),
-                0x31 => read_inst!(Inst::Xor, Size::Long, Order::Left, &mut i),
-                0x32 => read_inst!(Inst::Xor, Size::Byte, Order::Right, &mut i),
-                0x33 => read_inst!(Inst::Xor, Size::Long, Order::Right, &mut i),
-                0x38 => read_inst!(Inst::Cmp, Size::Byte, Order::Left, &mut i),
-                0x39 => read_inst!(Inst::Cmp, Size::Long, Order::Left, &mut i),
-                0x3a => read_inst!(Inst::Cmp, Size::Byte, Order::Right, &mut i),
-                0x3b => read_inst!(Inst::Cmp, Size::Long, Order::Right, &mut i),
+                0x00 => read_mrr_inst!(Inst::Add, Size::Byte, Order::Left, &mut i),
+                0x01 => read_mrr_inst!(Inst::Add, Size::Long, Order::Left, &mut i),
+                0x02 => read_mrr_inst!(Inst::Add, Size::Byte, Order::Right, &mut i),
+                0x03 => read_mrr_inst!(Inst::Add, Size::Long, Order::Right, &mut i),
+                0x04 => read_imm_inst!(Inst::Add, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x05 => read_imm_inst!(
+                    Inst::Add,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
+                0x08 => read_mrr_inst!(Inst::Or, Size::Byte, Order::Left, &mut i),
+                0x09 => read_mrr_inst!(Inst::Or, Size::Long, Order::Left, &mut i),
+                0x0a => read_mrr_inst!(Inst::Or, Size::Byte, Order::Right, &mut i),
+                0x0b => read_mrr_inst!(Inst::Or, Size::Long, Order::Right, &mut i),
+                0x0c => read_imm_inst!(Inst::Or, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x0d => {
+                    read_imm_inst!(Inst::Or, Reg::Eax, Imm::U32, Error::ExpectedImmLong, &mut i)
+                }
+                0x10 => read_mrr_inst!(Inst::Adc, Size::Byte, Order::Left, &mut i),
+                0x11 => read_mrr_inst!(Inst::Adc, Size::Long, Order::Left, &mut i),
+                0x12 => read_mrr_inst!(Inst::Adc, Size::Byte, Order::Right, &mut i),
+                0x13 => read_mrr_inst!(Inst::Adc, Size::Long, Order::Right, &mut i),
+                0x14 => read_imm_inst!(Inst::Adc, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x15 => read_imm_inst!(
+                    Inst::Adc,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
+                0x18 => read_mrr_inst!(Inst::Sbb, Size::Byte, Order::Left, &mut i),
+                0x19 => read_mrr_inst!(Inst::Sbb, Size::Long, Order::Left, &mut i),
+                0x1a => read_mrr_inst!(Inst::Sbb, Size::Byte, Order::Right, &mut i),
+                0x1b => read_mrr_inst!(Inst::Sbb, Size::Long, Order::Right, &mut i),
+                0x1c => read_imm_inst!(Inst::Sbb, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x1d => read_imm_inst!(
+                    Inst::Sbb,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
+                0x20 => read_mrr_inst!(Inst::And, Size::Byte, Order::Left, &mut i),
+                0x21 => read_mrr_inst!(Inst::And, Size::Long, Order::Left, &mut i),
+                0x22 => read_mrr_inst!(Inst::And, Size::Byte, Order::Right, &mut i),
+                0x23 => read_mrr_inst!(Inst::And, Size::Long, Order::Right, &mut i),
+                0x24 => read_imm_inst!(Inst::And, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x25 => read_imm_inst!(
+                    Inst::And,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
+                0x28 => read_mrr_inst!(Inst::Sub, Size::Byte, Order::Left, &mut i),
+                0x29 => read_mrr_inst!(Inst::Sub, Size::Long, Order::Left, &mut i),
+                0x2a => read_mrr_inst!(Inst::Sub, Size::Byte, Order::Right, &mut i),
+                0x2b => read_mrr_inst!(Inst::Sub, Size::Long, Order::Right, &mut i),
+                0x2c => read_imm_inst!(Inst::Sub, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x2d => read_imm_inst!(
+                    Inst::Sub,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
+                0x30 => read_mrr_inst!(Inst::Xor, Size::Byte, Order::Left, &mut i),
+                0x31 => read_mrr_inst!(Inst::Xor, Size::Long, Order::Left, &mut i),
+                0x32 => read_mrr_inst!(Inst::Xor, Size::Byte, Order::Right, &mut i),
+                0x33 => read_mrr_inst!(Inst::Xor, Size::Long, Order::Right, &mut i),
+                0x34 => read_imm_inst!(Inst::Xor, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x35 => read_imm_inst!(
+                    Inst::Xor,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
+                0x38 => read_mrr_inst!(Inst::Cmp, Size::Byte, Order::Left, &mut i),
+                0x39 => read_mrr_inst!(Inst::Cmp, Size::Long, Order::Left, &mut i),
+                0x3a => read_mrr_inst!(Inst::Cmp, Size::Byte, Order::Right, &mut i),
+                0x3b => read_mrr_inst!(Inst::Cmp, Size::Long, Order::Right, &mut i),
+                0x3c => read_imm_inst!(Inst::Cmp, Reg::Al, Imm::U8, Error::ExpectedImmByte, &mut i),
+                0x3d => read_imm_inst!(
+                    Inst::Cmp,
+                    Reg::Eax,
+                    Imm::U32,
+                    Error::ExpectedImmLong,
+                    &mut i
+                ),
                 op => unimplemented!("{:#04x}", op),
             });
         }

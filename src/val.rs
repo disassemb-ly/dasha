@@ -5,12 +5,14 @@ use crate::{Addr, DisplayFormat, Format, Size};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Imm {
     U8(u8),
+    U32(u32),
 }
 
 impl Imm {
     pub fn size(self) -> Size {
         match self {
             Imm::U8(_) => Size::Byte,
+            Imm::U32(_) => Size::Long,
         }
     }
 }
@@ -19,6 +21,7 @@ impl DisplayFormat for Imm {
     fn fmt(&self, fmt: Format, f: &mut fmt::Formatter) -> fmt::Result {
         match (self, fmt) {
             (Imm::U8(imm), Format::Att) => write!(f, "${:#x}", imm),
+            (Imm::U32(imm), Format::Att) => write!(f, "${:#x}", imm),
         }
     }
 }
