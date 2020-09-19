@@ -224,6 +224,8 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
+                0x06 => Inst::Push(Val::Addr(Addr::Direct(Reg::Es))),
+                0x07 => Inst::Pop(Val::Addr(Addr::Direct(Reg::Es))),
                 0x08 => read_mrr_inst!(Inst::Or, Size::Byte, Order::Left, &mut i),
                 0x09 => read_mrr_inst!(Inst::Or, Size::Long, Order::Left, &mut i),
                 0x0a => read_mrr_inst!(Inst::Or, Size::Byte, Order::Right, &mut i),
@@ -232,6 +234,8 @@ impl Dasha {
                 0x0d => {
                     read_imm_inst!(Inst::Or, Reg::Eax, Imm::U32, Error::ExpectedImmLong, &mut i)
                 }
+                0x0e => Inst::Push(Val::Addr(Addr::Direct(Reg::Cs))),
+                0x0f => unimplemented!("two-byte opcode prefix"), // TODO: impl two-byte opcode prefix
                 0x10 => read_mrr_inst!(Inst::Adc, Size::Byte, Order::Left, &mut i),
                 0x11 => read_mrr_inst!(Inst::Adc, Size::Long, Order::Left, &mut i),
                 0x12 => read_mrr_inst!(Inst::Adc, Size::Byte, Order::Right, &mut i),
@@ -244,6 +248,8 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
+                0x16 => Inst::Push(Val::Addr(Addr::Direct(Reg::Ss))),
+                0x17 => Inst::Pop(Val::Addr(Addr::Direct(Reg::Ss))),
                 0x18 => read_mrr_inst!(Inst::Sbb, Size::Byte, Order::Left, &mut i),
                 0x19 => read_mrr_inst!(Inst::Sbb, Size::Long, Order::Left, &mut i),
                 0x1a => read_mrr_inst!(Inst::Sbb, Size::Byte, Order::Right, &mut i),
@@ -256,6 +262,8 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
+                0x1e => Inst::Push(Val::Addr(Addr::Direct(Reg::Ds))),
+                0x1f => Inst::Pop(Val::Addr(Addr::Direct(Reg::Ds))),
                 0x20 => read_mrr_inst!(Inst::And, Size::Byte, Order::Left, &mut i),
                 0x21 => read_mrr_inst!(Inst::And, Size::Long, Order::Left, &mut i),
                 0x22 => read_mrr_inst!(Inst::And, Size::Byte, Order::Right, &mut i),

@@ -4,6 +4,9 @@ use crate::{DisplayFormat, Format, Val};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Inst {
+    Push(Val),
+    Pop(Val),
+
     Add(Val, Val),
     Or(Val, Val),
     Adc(Val, Val),
@@ -17,6 +20,15 @@ pub enum Inst {
 impl DisplayFormat for Inst {
     fn fmt(&self, fmt: Format, f: &mut fmt::Formatter) -> fmt::Result {
         macro_rules! write_inst {
+            ( $inst:expr, $op:expr ) => {
+                write!(
+                    f,
+                    "{}{} {}",
+                    $inst,
+                    $op.size().display(fmt),
+                    $op.display(fmt)
+                )
+            };
             ( $inst:expr, $op1:expr, $op2:expr ) => {
                 write!(
                     f,
@@ -30,6 +42,8 @@ impl DisplayFormat for Inst {
         }
 
         match (self, fmt) {
+            (Inst::Push(op), Format::Att) => write_inst!("push", op),
+            (Inst::Pop(op), Format::Att) => write_inst!("pop", op),
             (Inst::Add(op1, op2), Format::Att) => write_inst!("add", op1, op2),
             (Inst::Or(op1, op2), Format::Att) => write_inst!("or", op1, op2),
             (Inst::Adc(op1, op2), Format::Att) => write_inst!("adc", op1, op2),

@@ -4,6 +4,12 @@ use crate::{DisplayFormat, Format, Size};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Reg {
+    // segment registers
+    Es,
+    Cs,
+    Ss,
+    Ds,
+
     // 8-bit registers (byte)
     Al,
     Cl,
@@ -30,6 +36,7 @@ pub enum Reg {
 impl Reg {
     pub fn size(&self) -> Size {
         match self {
+            Reg::Es | Reg::Cs | Reg::Ss | Reg::Ds => unimplemented!(),
             Reg::Al | Reg::Cl | Reg::Dl | Reg::Bl | Reg::Ah | Reg::Ch | Reg::Dh | Reg::Bh => {
                 Size::Byte
             }
@@ -49,6 +56,10 @@ impl Reg {
 impl DisplayFormat for Reg {
     fn fmt(&self, fmt: Format, f: &mut fmt::Formatter) -> fmt::Result {
         match (self, fmt) {
+            (Reg::Es, Format::Att) => write!(f, "%es"),
+            (Reg::Cs, Format::Att) => write!(f, "%cs"),
+            (Reg::Ss, Format::Att) => write!(f, "%ss"),
+            (Reg::Ds, Format::Att) => write!(f, "%ds"),
             (Reg::Al, Format::Att) => write!(f, "%al"),
             (Reg::Cl, Format::Att) => write!(f, "%cl"),
             (Reg::Dl, Format::Att) => write!(f, "%dl"),
