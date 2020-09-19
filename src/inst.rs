@@ -4,6 +4,11 @@ use crate::{DisplayFormat, Format, Val};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Inst {
+    Daa,
+    Das,
+    Aaa,
+    Aas,
+
     Push(Val),
     Pop(Val),
 
@@ -42,6 +47,10 @@ impl DisplayFormat for Inst {
         }
 
         match (self, fmt) {
+            (Inst::Daa, Format::Att) => write!(f, "daa"),
+            (Inst::Das, Format::Att) => write!(f, "das"),
+            (Inst::Aaa, Format::Att) => write!(f, "aaa"),
+            (Inst::Aas, Format::Att) => write!(f, "aas"),
             (Inst::Push(op), Format::Att) => write_inst!("push", op),
             (Inst::Pop(op), Format::Att) => write_inst!("pop", op),
             (Inst::Add(op1, op2), Format::Att) => write_inst!("add", op1, op2),
