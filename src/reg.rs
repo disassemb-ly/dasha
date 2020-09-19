@@ -36,7 +36,7 @@ pub enum Reg {
 impl Reg {
     pub fn size(&self) -> Size {
         match self {
-            Reg::Es | Reg::Cs | Reg::Ss | Reg::Ds => unimplemented!(),
+            Reg::Es | Reg::Cs | Reg::Ss | Reg::Ds => Size::Word,
             Reg::Al | Reg::Cl | Reg::Dl | Reg::Bl | Reg::Ah | Reg::Ch | Reg::Dh | Reg::Bh => {
                 Size::Byte
             }
