@@ -11,6 +11,8 @@ pub enum Inst {
 
     Push(Val),
     Pop(Val),
+    Inc(Val),
+    Dec(Val),
 
     Add(Val, Val),
     Or(Val, Val),
@@ -53,6 +55,8 @@ impl DisplayFormat for Inst {
             (Inst::Aas, Format::Att) => write!(f, "aas"),
             (Inst::Push(op), Format::Att) => write_inst!("push", op),
             (Inst::Pop(op), Format::Att) => write_inst!("pop", op),
+            (Inst::Inc(op), Format::Att) => write_inst!("inc", op),
+            (Inst::Dec(op), Format::Att) => write_inst!("dec", op),
             (Inst::Add(op1, op2), Format::Att) => write_inst!("add", op1, op2),
             (Inst::Or(op1, op2), Format::Att) => write_inst!("or", op1, op2),
             (Inst::Adc(op1, op2), Format::Att) => write_inst!("adc", op1, op2),

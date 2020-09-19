@@ -320,6 +320,8 @@ impl Dasha {
                 ),
                 0x3e => unimplemented!("ds segment override prefix"),
                 0x3f => Inst::Aas,
+                op @ (0x40..=0x47) => Inst::Inc(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
+                op @ (0x48..=0x4f) => Inst::Dec(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
                 op => unimplemented!("{:#04x}", op),
             });
         }
