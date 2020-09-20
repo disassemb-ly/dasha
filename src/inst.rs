@@ -8,6 +8,8 @@ pub enum Inst {
     Das,
     Aaa,
     Aas,
+    PushA,
+    PopA,
 
     Push(Val),
     Pop(Val),
@@ -53,6 +55,8 @@ impl DisplayFormat for Inst {
             (Inst::Das, Format::Att) => write!(f, "das"),
             (Inst::Aaa, Format::Att) => write!(f, "aaa"),
             (Inst::Aas, Format::Att) => write!(f, "aas"),
+            (Inst::PushA, Format::Att) => write!(f, "pusha"),
+            (Inst::PopA, Format::Att) => write!(f, "popa"),
             (Inst::Push(op), Format::Att) => write_inst!("push", op),
             (Inst::Pop(op), Format::Att) => write_inst!("pop", op),
             (Inst::Inc(op), Format::Att) => write_inst!("inc", op),

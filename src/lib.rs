@@ -324,6 +324,8 @@ impl Dasha {
                 op @ (0x48..=0x4f) => Inst::Dec(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
                 op @ (0x50..=0x57) => Inst::Push(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
                 op @ (0x58..=0x5f) => Inst::Pop(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
+                0x60 => Inst::PushA,
+                0x61 => Inst::PopA,
                 op => unimplemented!("{:#04x}", op),
             });
         }
