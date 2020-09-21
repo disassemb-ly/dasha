@@ -235,7 +235,7 @@ impl Dasha {
                     read_imm_inst!(Inst::Or, Reg::Eax, Imm::U32, Error::ExpectedImmLong, &mut i)
                 }
                 0x0e => Inst::Push(Val::Addr(Addr::Direct(Reg::Cs))),
-                0x0f => unimplemented!("two-byte opcode prefix"), // TODO: impl two-byte opcode prefix
+                0x0f => unimplemented!("two-byte opcode prefix (0x0f)"), // TODO: impl two-byte opcode prefix
                 0x10 => read_mrr_inst!(Inst::Adc, Size::Byte, Order::Left, &mut i),
                 0x11 => read_mrr_inst!(Inst::Adc, Size::Long, Order::Left, &mut i),
                 0x12 => read_mrr_inst!(Inst::Adc, Size::Byte, Order::Right, &mut i),
@@ -276,7 +276,7 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
-                0x26 => unimplemented!("es segment override prefix"),
+                0x26 => unimplemented!("es segment override prefix (0x26)"),
                 0x27 => Inst::Daa,
                 0x28 => read_mrr_inst!(Inst::Sub, Size::Byte, Order::Left, &mut i),
                 0x29 => read_mrr_inst!(Inst::Sub, Size::Long, Order::Left, &mut i),
@@ -290,7 +290,7 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
-                0x2e => unimplemented!("cs segment override prefix"),
+                0x2e => unimplemented!("cs segment override prefix (0x2e)"),
                 0x2f => Inst::Das,
                 0x30 => read_mrr_inst!(Inst::Xor, Size::Byte, Order::Left, &mut i),
                 0x31 => read_mrr_inst!(Inst::Xor, Size::Long, Order::Left, &mut i),
@@ -304,7 +304,7 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
-                0x36 => unimplemented!("ss segment override prefix"),
+                0x36 => unimplemented!("ss segment override prefix (0x36)"),
                 0x37 => Inst::Aaa,
                 0x38 => read_mrr_inst!(Inst::Cmp, Size::Byte, Order::Left, &mut i),
                 0x39 => read_mrr_inst!(Inst::Cmp, Size::Long, Order::Left, &mut i),
@@ -318,7 +318,7 @@ impl Dasha {
                     Error::ExpectedImmLong,
                     &mut i
                 ),
-                0x3e => unimplemented!("ds segment override prefix"),
+                0x3e => unimplemented!("ds segment override prefix (0x3e)"),
                 0x3f => Inst::Aas,
                 op @ (0x40..=0x47) => Inst::Inc(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
                 op @ (0x48..=0x4f) => Inst::Dec(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
