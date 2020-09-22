@@ -326,6 +326,12 @@ impl Dasha {
                 op @ (0x58..=0x5f) => Inst::Pop(Val::Addr(Addr::Direct(op.rm(Size::Long)))),
                 0x60 => Inst::PushA,
                 0x61 => Inst::PopA,
+                0x62 => unimplemented!("bound instruction"),
+                0x63 => unimplemented!("arpl instruction"),
+                0x64 => unimplemented!("fs segment override prefix (0x64)"),
+                0x65 => unimplemented!("gs segment override prefix (0x65)"),
+                0x66 => unimplemented!("operand/precision-size override prefix (0x66)"),
+                0x67 => unimplemented!("address-size override prefix (0x67)"),
                 op => unimplemented!("{:#04x}", op),
             });
         }
