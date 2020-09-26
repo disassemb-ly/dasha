@@ -332,6 +332,9 @@ impl Dasha {
                 0x65 => unimplemented!("gs segment override prefix (0x65)"),
                 0x66 => unimplemented!("operand/precision-size override prefix (0x66)"),
                 0x67 => unimplemented!("address-size override prefix (0x67)"),
+                0x68 => Inst::Push(Val::Imm(Imm::U32(
+                    i.read_le().ok_or(Error::ExpectedImmLong)?,
+                ))),
                 op => unimplemented!("{:#04x}", op),
             });
         }
