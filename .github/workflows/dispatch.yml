@@ -5,5 +5,4 @@ on:
     branches:
       - main
 
-run: |
-curl --version
+run: curl --version
