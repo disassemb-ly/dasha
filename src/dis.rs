@@ -91,7 +91,7 @@ trait ByteSliceExt<'a> {
     fn reg(self, sz: Size) -> Result<Spanning<Reg>, Error>;
     fn rm(self, sz: Size) -> Result<Spanning<Op>, Error>;
     fn inst_len(self) -> Result<usize, Error>;
-    fn tail(self) -> Result<&'a [Spanning<u8>], Error>;
+    fn inst_split(self) -> Result<Option<(&'a [Spanning<u8>], &'a [Spanning<u8>])>, Error>;
 }
 
 impl<'a> ByteSliceExt<'a> for &'a [Spanning<u8>] {
@@ -169,14 +169,9 @@ impl<'a> ByteSliceExt<'a> for &'a [Spanning<u8>] {
         }
     }
 
-    fn tail(self) -> Result<&'a [Spanning<u8>], Error> {
-        let mrr = self.get(0).ok_or(Error::ExpectedMrr)?;
-        match mrr.mode() {
-            Mode::Direct => self.get(1..).ok_or(Error::ExpectedMrr),
-            Mode::ByteDisp => self.get(2..).ok_or(Error::ExpectedByteDisp),
-            Mode::LongDisp => self.get(5..).ok_or(Error::ExpectedLongDisp),
-            Mode::Indirect => self.get(1..).ok_or(Error::ExpectedMrr),
-        }
+    fn inst_split(self) -> Result<Option<(&'a [Spanning<u8>], &'a [Spanning<u8>])>, Error> {
+        let len = self.inst_len()?;
+        Ok(self.get(..len).map(|head| (head, self.get(len..).unwrap())))
     }
 }
 
@@ -185,6 +180,7 @@ pub enum Error {
     ExpectedMrr,
     ExpectedByteDisp,
     ExpectedLongDisp,
+    PartialInst,
 }
 
 impl error::Error for Error {}
@@ -195,6 +191,7 @@ impl fmt::Display for Error {
             Error::ExpectedMrr => write!(f, "expected mod-reg-r/m byte"),
             Error::ExpectedByteDisp => write!(f, "expected byte disp (1 byte)"),
             Error::ExpectedLongDisp => write!(f, "expected long disp (4 bytes)"),
+            Error::PartialInst => write!(f, "partial/incomplete instruction"),
         }
     }
 }
@@ -204,14 +201,19 @@ pub fn disasm(mut code: &[Spanning<u8>]) -> Result<Vec<Spanning<Inst>>, Error> {
     while !code.is_empty() {
         let inst;
         (inst, code) = match code {
-            [Spanning(0x00, _oss, _osl, _), ref tail @ ..] => (
+            [Spanning(0x00, oss, osl, _), ref tail @ ..] => (
                 Spanning(
                     Inst::AddRegOp(tail.reg(Size::Byte)?, tail.rm(Size::Byte)?),
-                    0,
-                    0,
+                    *oss,
+                    tail.inst_split()?
+                        .ok_or(Error::PartialInst)?
+                        .0
+                        .last()
+                        .map(|Spanning(_, ss, sl, _)| ss + sl - oss)
+                        .unwrap_or(*osl),
                     None,
                 ),
-                tail.tail()?,
+                tail.inst_split()?.ok_or(Error::PartialInst)?.1,
             ),
             _ => unimplemented!("{:?}", code),
         };
