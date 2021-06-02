@@ -50,7 +50,7 @@ impl fmt::Display for Scale {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Reg {
     // 8-bit registers
     Al,

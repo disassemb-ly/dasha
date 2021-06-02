@@ -90,6 +90,7 @@ trait ByteSliceExt<'a> {
     fn mode(self) -> Option<Mode>;
     fn reg(self, sz: Size) -> Result<Spanning<Reg>, Error>;
     fn rm(self, sz: Size) -> Result<Spanning<Op>, Error>;
+    fn inst_len(self) -> Result<usize, Error>;
     fn tail(self) -> Result<&'a [Spanning<u8>], Error>;
 }
 
@@ -154,6 +155,20 @@ impl<'a> ByteSliceExt<'a> for &'a [Spanning<u8>] {
             })
     }
 
+    fn inst_len(self) -> Result<usize, Error> {
+        let mrr = self.get(0).ok_or(Error::ExpectedMrr)?;
+        match mrr.mode() {
+            Mode::Indirect if mrr.rm(Size::Long).0 == Reg::Esp => Ok(2),
+            Mode::Indirect if mrr.rm(Size::Long).0 == Reg::Ebp => Ok(5),
+            Mode::Indirect => Ok(1),
+            Mode::ByteDisp if mrr.rm(Size::Long).0 == Reg::Esp => Ok(3),
+            Mode::ByteDisp => Ok(2),
+            Mode::LongDisp if mrr.rm(Size::Long).0 == Reg::Esp => Ok(6),
+            Mode::LongDisp => Ok(5),
+            Mode::Direct => Ok(1),
+        }
+    }
+
     fn tail(self) -> Result<&'a [Spanning<u8>], Error> {
         let mrr = self.get(0).ok_or(Error::ExpectedMrr)?;
         match mrr.mode() {
@@ -165,7 +180,7 @@ impl<'a> ByteSliceExt<'a> for &'a [Spanning<u8>] {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Error {
     ExpectedMrr,
     ExpectedByteDisp,
@@ -203,4 +218,26 @@ pub fn disasm(mut code: &[Spanning<u8>]) -> Result<Vec<Spanning<Inst>>, Error> {
         insts.push(inst);
     }
     Ok(insts)
+}
+
+#[test]
+fn test_byte_slice_ext_inst_len() {
+    assert_eq!([Spanning(0x00, 0, 2, None)].as_ref().inst_len(), Ok(1)); // mod-reg-r/m
+    assert_eq!([Spanning(0x04, 0, 2, None)].as_ref().inst_len(), Ok(2)); // mod-reg-r/m + sib
+    assert_eq!([Spanning(0x05, 0, 2, None)].as_ref().inst_len(), Ok(5)); // disp32 only
+    assert_eq!([Spanning(0x3c, 0, 2, None)].as_ref().inst_len(), Ok(2)); // mod-reg-r/m + sib
+    assert_eq!([Spanning(0x3d, 0, 2, None)].as_ref().inst_len(), Ok(5)); // disp32 only
+    assert_eq!([Spanning(0x3f, 0, 2, None)].as_ref().inst_len(), Ok(1)); // mod-reg-r/m
+    assert_eq!([Spanning(0x40, 0, 2, None)].as_ref().inst_len(), Ok(2)); // mod-reg-r/m + disp8
+    assert_eq!([Spanning(0x44, 0, 2, None)].as_ref().inst_len(), Ok(3)); // mod-reg-r/m + sib + disp8
+    assert_eq!([Spanning(0x7c, 0, 2, None)].as_ref().inst_len(), Ok(3)); // mod-reg-r/m + sib + disp8
+    assert_eq!([Spanning(0x7f, 0, 2, None)].as_ref().inst_len(), Ok(2)); // mod-reg-r/m + disp8
+    assert_eq!([Spanning(0x80, 0, 2, None)].as_ref().inst_len(), Ok(5)); // mod-reg-r/m + disp32
+    assert_eq!([Spanning(0x84, 0, 2, None)].as_ref().inst_len(), Ok(6)); // mod-reg-r/m + sib + disp32
+    assert_eq!([Spanning(0xbc, 0, 2, None)].as_ref().inst_len(), Ok(6)); // mod-reg-r/m + sib + disp32
+    assert_eq!([Spanning(0xbf, 0, 2, None)].as_ref().inst_len(), Ok(5)); // mod-reg-r/m + disp32
+    assert_eq!([Spanning(0xc0, 0, 2, None)].as_ref().inst_len(), Ok(1)); // mod-reg-r/m
+    assert_eq!([Spanning(0xc4, 0, 2, None)].as_ref().inst_len(), Ok(1)); // mod-reg-r/m
+    assert_eq!([Spanning(0xfc, 0, 2, None)].as_ref().inst_len(), Ok(1)); // mod-reg-r/m
+    assert_eq!([Spanning(0xff, 0, 2, None)].as_ref().inst_len(), Ok(1)); // mod-reg-r/m
 }
